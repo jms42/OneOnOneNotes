@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Search — 1:1 Notes{% endblock %}
+{% block content %}
+<h4 class="mb-1">Search</h4>
+
+{% if query %}
+<p class="text-muted mb-3">
+  {{ results | length }} result{{ 's' if results | length != 1 }} for <strong>{{ query }}</strong>
+</p>
+{% endif %}
+
+{% if results %}
+<div class="list-group">
+  {% for m in results %}
+  {% set person = people_map.get(m.person_id, {}) %}
+  <a href="/meetings/{{ m.id }}" class="list-group-item list-group-item-action">
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <strong>{{ person.get('name', 'Unknown') }}</strong>
+        <span class="text-muted ms-2 small">{{ m.date }}</span>
+      </div>
+      <span class="text-warning">{{ '★' * m.sentiment }}{{ '☆' * (5 - m.sentiment) }}</span>
+    </div>
+    {% if m.agenda %}
+    <div class="small text-muted mt-1 text-truncate">{{ m.agenda }}</div>
+    {% endif %}
+    {% if m.notes %}
+    <div class="small text-muted text-truncate">{{ m.notes }}</div>
+    {% endif %}
+    {% set matching_actions = m.action_items | selectattr('description') | list %}
+    {% if matching_actions %}
+    <div class="small text-muted mt-1">{{ matching_actions | length }} action item(s)</div>
+    {% endif %}
+  </a>
+  {% endfor %}
+</div>
+{% elif query %}
+<div class="text-muted border rounded p-4 text-center">
+  No meetings found matching <strong>{{ query }}</strong>.
+</div>
+{% else %}
+<div class="text-muted border rounded p-4 text-center">
+  Enter a search term above to find meetings.
+</div>
+{% endif %}
+{% endblock %}

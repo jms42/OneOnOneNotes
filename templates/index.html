@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard — 1:1 Notes{% endblock %}
+
+{% macro meeting_row(m) %}
+<a href="/meetings/{{ m.id }}" class="list-group-item list-group-item-action">
+  <div class="d-flex justify-content-between align-items-center">
+    <div>
+      <strong>{{ people_map[m.person_id].name if m.person_id in people_map else 'Unknown' }}</strong>
+      <span class="text-muted ms-2 small">{{ m.date }}</span>
+    </div>
+    <span class="text-warning">{{ '★' * m.sentiment }}{{ '☆' * (5 - m.sentiment) }}</span>
+  </div>
+  {% if m.agenda %}
+  <div class="small text-muted mt-1 text-truncate">{{ m.agenda }}</div>
+  {% endif %}
+  {% set open = m.action_items | selectattr('completed', 'equalto', false) | list | length %}
+  {% if open > 0 %}
+  <div class="mt-1"><span class="badge bg-warning text-dark">{{ open }} open action{{ 's' if open != 1 }}</span></div>
+  {% endif %}
+</a>
+{% endmacro %}
+
+{% block content %}
+<div class="row g-4">
+  <div class="col-md-7">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5 class="mb-0">Meetings</h5>
+      <a href="/meetings/new" class="btn btn-primary btn-sm">+ New Meeting</a>
+    </div>
+
+    {% if upcoming %}
+    <h6 class="text-uppercase text-muted small fw-semibold mb-2">Upcoming</h6>
+    <div class="list-group mb-4">
+      {% for m in upcoming %}{{ meeting_row(m) }}{% endfor %}
+    </div>
+    {% endif %}
+
+    {% if past %}
+    <h6 class="text-uppercase text-muted small fw-semibold mb-2">Recent</h6>
+    <div class="list-group">
+      {% for m in past %}{{ meeting_row(m) }}{% endfor %}
+    </div>
+    {% endif %}
+
+    {% if not upcoming and not past %}
+    <div class="text-muted border rounded p-4 text-center">
+      No meetings yet. <a href="/people">Add people</a> to get started.
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="col-md-5">
+    <h5 class="mb-3">Open Action Items</h5>
+    {% if open_actions %}
+    <ul class="list-group">
+      {% for a in open_actions %}
+      <li class="list-group-item">
+        <div class="d-flex justify-content-between align-items-start gap-2">
+          <div>
+            <div>{{ a.description }}</div>
+            <div class="small text-muted">
+              {{ a.person }} &bull; <a href="/meetings/{{ a.meeting_id }}" class="text-muted">{{ a.meeting_date }}</a>
+              {% if a.due_date %}&bull; Due {{ a.due_date }}{% endif %}
+              {% if a.owner %}&bull; <span class="badge bg-secondary">{{ a.owner }}</span>{% endif %}
+            </div>
+          </div>
+          <form method="post" action="/meetings/{{ a.meeting_id }}/actions/{{ a.id }}/toggle" class="flex-shrink-0">
+            <button class="btn btn-sm btn-outline-success" type="submit" title="Mark done">✓</button>
+          </form>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <div class="text-muted border rounded p-4 text-center">No open action items.</div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

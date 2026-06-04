@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block title %}{{ person.name }} — 1:1 Notes{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-start mb-4">
+  <div>
+    <h4 class="mb-1">{{ person.name }}</h4>
+    {% if person.title %}<div class="text-muted">{{ person.title }}</div>{% endif %}
+    {% if person.team %}<div class="text-muted small">{{ person.team }}</div>{% endif %}
+  </div>
+  <a href="/meetings/new?person_id={{ person.id }}" class="btn btn-primary btn-sm">+ New Meeting</a>
+</div>
+
+{% if upcoming %}
+<h6 class="text-uppercase text-muted small fw-semibold mb-2">Upcoming</h6>
+<div class="list-group mb-4">
+  {% for m in upcoming %}
+  <a href="/meetings/{{ m.id }}" class="list-group-item list-group-item-action">
+    <div class="d-flex justify-content-between align-items-center">
+      <strong>{{ m.date }}</strong>
+      <span class="text-warning" title="{{ m.sentiment }}/5">{{ '★' * m.sentiment }}{{ '☆' * (5 - m.sentiment) }}</span>
+    </div>
+    {% if m.agenda %}
+    <div class="small text-muted mt-1 text-truncate">{{ m.agenda }}</div>
+    {% endif %}
+    {% set open = m.action_items | selectattr('completed', 'equalto', false) | list | length %}
+    {% if open > 0 %}
+    <div class="mt-1"><span class="badge bg-warning text-dark">{{ open }} open action{{ 's' if open != 1 }}</span></div>
+    {% endif %}
+  </a>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% if past %}
+<h6 class="text-uppercase text-muted small fw-semibold mb-2">Past Meetings</h6>
+<div class="list-group">
+  {% for m in past %}
+  <a href="/meetings/{{ m.id }}" class="list-group-item list-group-item-action">
+    <div class="d-flex justify-content-between align-items-center">
+      <strong>{{ m.date }}</strong>
+      <span class="text-warning" title="{{ m.sentiment }}/5">{{ '★' * m.sentiment }}{{ '☆' * (5 - m.sentiment) }}</span>
+    </div>
+    {% if m.agenda %}
+    <div class="small text-muted mt-1 text-truncate">{{ m.agenda }}</div>
+    {% endif %}
+    {% set open = m.action_items | selectattr('completed', 'equalto', false) | list | length %}
+    {% set done = m.action_items | selectattr('completed', 'equalto', true) | list | length %}
+    {% if m.action_items %}
+    <div class="mt-1 small text-muted">
+      {{ m.action_items | length }} action item(s)
+      {% if open > 0 %}&nbsp;<span class="badge bg-warning text-dark">{{ open }} open</span>{% endif %}
+      {% if done > 0 %}&nbsp;<span class="badge bg-success">{{ done }} done</span>{% endif %}
+    </div>
+    {% endif %}
+  </a>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% if not upcoming and not past %}
+<div class="text-muted border rounded p-4 text-center">
+  No meetings recorded yet. <a href="/meetings/new?person_id={{ person.id }}">Add the first one.</a>
+</div>
+{% endif %}
+
+<div class="mt-4">
+  <a href="/people" class="text-muted small">← All people</a>
+</div>
+{% endblock %}
