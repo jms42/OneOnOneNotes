@@ -14,9 +14,18 @@ from flask import Flask, render_template, request, redirect, url_for, send_file
 
 app = Flask(__name__)
 
-DATA_FILE     = os.path.join(os.path.dirname(__file__), "data", "meetings.json")
-ENC_FILE      = os.path.join(os.path.dirname(__file__), "data", "meetings.enc")
-SETTINGS_FILE = os.path.join(os.path.dirname(__file__), "data", "settings.json")
+DATA_FILE      = os.path.join(os.path.dirname(__file__), "data", "meetings.json")
+ENC_FILE       = os.path.join(os.path.dirname(__file__), "data", "meetings.enc")
+SETTINGS_FILE  = os.path.join(os.path.dirname(__file__), "data", "settings.json")
+SECRET_KEY_FILE = os.path.join(os.path.dirname(__file__), "data", ".secret_key")
+
+# Generate and persist a secret key so sessions are stable across restarts
+os.makedirs(os.path.dirname(SECRET_KEY_FILE), exist_ok=True)
+if not os.path.exists(SECRET_KEY_FILE):
+    with open(SECRET_KEY_FILE, "wb") as _f:
+        _f.write(os.urandom(32))
+with open(SECRET_KEY_FILE, "rb") as _f:
+    app.secret_key = _f.read()
 
 # Password held in memory for the lifetime of the process
 _password: str | None = None
@@ -449,4 +458,5 @@ if __name__ == "__main__":
         else:
             print("Too many failed attempts. Exiting.")
             sys.exit(1)
-    app.run(debug=True, port=5001, use_reloader=False)
+    debug = os.environ.get("FLASK_DEBUG", "0") == "1"
+    app.run(debug=debug, host="127.0.0.1", port=5001, use_reloader=False)
