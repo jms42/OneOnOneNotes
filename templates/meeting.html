@@ -9,7 +9,14 @@
       {{ '★' * meeting.sentiment }}{{ '☆' * (5 - meeting.sentiment) }}
     </div>
   </div>
-  <div class="d-flex gap-2">
+  <div class="d-flex gap-2 align-items-start flex-wrap">
+    <form method="post" action="/meetings/{{ meeting.id }}/toggle-complete">
+      {% if meeting.get('completed', False) %}
+      <button class="btn btn-success btn-sm">✓ Completed — Mark Incomplete</button>
+      {% else %}
+      <button class="btn btn-outline-success btn-sm">Mark Complete</button>
+      {% endif %}
+    </form>
     <a href="/meetings/{{ meeting.id }}/edit" class="btn btn-outline-secondary btn-sm">Edit</a>
     <form method="post" action="/meetings/{{ meeting.id }}/delete"
           onsubmit="return confirm('Delete this meeting?')">

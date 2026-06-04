@@ -1,4 +1,6 @@
 data/meetings.json
+data/meetings.enc
+data/settings.json
 __pycache__/
 *.pyc
 .env

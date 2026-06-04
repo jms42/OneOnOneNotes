@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}Settings — 1:1 Notes{% endblock %}
+{% block content %}
+<h4 class="mb-4">Settings</h4>
+
+{% if msg == 'encryption_enabled' %}
+<div class="alert alert-success">Encryption enabled. Your data is now stored encrypted. Remember your password — it cannot be recovered.</div>
+{% elif msg == 'encryption_disabled' %}
+<div class="alert alert-success">Encryption disabled. Your data is now stored as plain JSON.</div>
+{% endif %}
+
+{% if error %}
+<div class="alert alert-danger">{{ error }}</div>
+{% endif %}
+
+<div class="card shadow-sm mb-4">
+  <div class="card-header fw-semibold d-flex justify-content-between align-items-center">
+    Data Encryption
+    {% if settings.encryption_enabled %}
+    <span class="badge bg-success">Enabled</span>
+    {% else %}
+    <span class="badge bg-secondary">Disabled</span>
+    {% endif %}
+  </div>
+  <div class="card-body">
+    {% if not settings.encryption_enabled %}
+    <p class="text-muted small mb-3">
+      When enabled, <code>meetings.enc</code> replaces <code>meetings.json</code>.
+      The app will prompt for your password each time it starts.
+      <strong>There is no password recovery</strong> — if you forget it, your data cannot be decrypted.
+    </p>
+    <form method="post" action="/settings/enable-encryption">
+      <div class="row g-2 mb-3">
+        <div class="col-md-5">
+          <label class="form-label">New password</label>
+          <input type="password" name="password" class="form-control" required autocomplete="new-password">
+        </div>
+        <div class="col-md-5">
+          <label class="form-label">Confirm password</label>
+          <input type="password" name="confirm_password" class="form-control" required autocomplete="new-password">
+        </div>
+      </div>
+      <button type="submit" class="btn btn-warning">Enable Encryption</button>
+    </form>
+    {% else %}
+    <p class="text-muted small mb-3">
+      Disabling encryption will decrypt your data and save it as plain <code>meetings.json</code>.
+      Enter your current password to confirm.
+    </p>
+    <form method="post" action="/settings/disable-encryption"
+          onsubmit="return confirm('Disable encryption and save data as plain JSON?')">
+      <div class="row g-2 mb-3">
+        <div class="col-md-5">
+          <label class="form-label">Current password</label>
+          <input type="password" name="password" class="form-control" required autocomplete="current-password">
+        </div>
+      </div>
+      <button type="submit" class="btn btn-outline-danger">Disable Encryption</button>
+    </form>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
