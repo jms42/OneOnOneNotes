@@ -27,6 +27,12 @@ pip3 install -r requirements.txt
 python3 app.py
 ```
 
+To enable verbose error pages in the browser (development only):
+
+```bash
+FLASK_DEBUG=1 python3 app.py
+```
+
 Then open [http://localhost:5001](http://localhost:5001) in your browser.
 
 ## Data storage
