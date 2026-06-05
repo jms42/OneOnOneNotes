@@ -56,6 +56,16 @@ Enable encryption from the **⚙ Settings** page. Once enabled:
 
 > **There is no password recovery.** If you forget your password your data cannot be decrypted.
 
+## Upgrading
+
+```bash
+git pull
+pip3 install -r requirements.txt
+python3 app.py
+```
+
+Your data file (`data/meetings.json` or `data/meetings.enc`) is excluded from git and will not be affected by an upgrade. It is still good practice to take a backup before upgrading using the **↓ Backup** button.
+
 ## Running on multiple machines
 
 If you keep the project folder in OneDrive (or another sync service), the data file syncs automatically. Avoid running the app on two machines at the same time to prevent write conflicts.
