@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import rel_badge with context %}
+{% block title %}Relationships — 1:1 Notes{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h4 class="mb-0">Relationships</h4>
+  <a href="/people" class="btn btn-outline-secondary btn-sm">Manage People</a>
+</div>
+
+{% if ordered %}
+  {% for key, label, group_people in ordered %}
+  <div class="mb-5">
+    <h6 class="fw-semibold mb-3">
+      {% set color = relationship_colors.get(key, 'secondary') %}
+      <span class="badge bg-{{ color }} me-2">{{ label }}</span>
+      <span class="text-muted fw-normal small">{{ group_people | length }} person{{ 's' if group_people | length != 1 }}</span>
+    </h6>
+    <div class="row row-cols-1 row-cols-md-3 g-3">
+      {% for p in group_people %}
+      <div class="col">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <h6 class="card-title mb-1">
+              <a href="/people/{{ p.id }}" class="text-decoration-none">{{ p.name }}</a>
+            </h6>
+            {% if p.title %}<div class="small text-muted">{{ p.title }}</div>{% endif %}
+            {% if p.team %}<div class="small text-muted">{{ p.team }}</div>{% endif %}
+            {% if p.notes %}
+            <div class="small text-muted mt-2 text-truncate" title="{{ p.notes }}">{{ p.notes }}</div>
+            {% endif %}
+            <div class="small text-muted mt-2">{{ meeting_counts.get(p.id, 0) }} meeting(s)</div>
+          </div>
+          <div class="card-footer bg-transparent d-flex gap-2">
+            <a href="/meetings/new?person_id={{ p.id }}" class="btn btn-sm btn-outline-primary">+ Meeting</a>
+            <a href="/people/{{ p.id }}" class="btn btn-sm btn-outline-secondary">View</a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+{% else %}
+<div class="text-muted border rounded p-5 text-center">
+  No people added yet. <a href="/people">Add people</a> and assign relationship types to see them here.
+</div>
+{% endif %}
+{% endblock %}

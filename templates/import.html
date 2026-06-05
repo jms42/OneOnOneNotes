@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Import Backup — 1:1 Notes{% endblock %}
+{% block content %}
+<h4 class="mb-2">Import Backup</h4>
+<p class="text-muted mb-4">Restore data from a <code>.json</code> or encrypted <code>.enc</code> backup file.</p>
+
+{% if error %}
+<div class="alert alert-danger">{{ error }}</div>
+{% endif %}
+
+<form method="post" enctype="multipart/form-data" action="/import"
+      onsubmit="return document.getElementById('modeReplace').checked ? confirm('Replace will overwrite ALL existing data. Continue?') : true">
+  <div class="mb-3">
+    <label class="form-label">Backup file <span class="text-danger">*</span></label>
+    <input type="file" name="backup_file" class="form-control" accept=".json,.enc" required>
+    <div class="form-text">For <code>.enc</code> files you will be asked for the decryption password on the next step.</div>
+  </div>
+
+  <div class="mb-4">
+    <label class="form-label">Import mode</label>
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="mode" value="merge" id="modeMerge" checked>
+      <label class="form-check-label" for="modeMerge">
+        <strong>Merge</strong> — add imported records that don't already exist (skips duplicates by ID)
+      </label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="mode" value="replace" id="modeReplace">
+      <label class="form-check-label" for="modeReplace">
+        <strong>Replace</strong> — overwrite all existing data with the backup
+      </label>
+    </div>
+  </div>
+
+  <div class="d-flex gap-2">
+    <button type="submit" class="btn btn-warning">Import</button>
+    <a href="/" class="btn btn-outline-secondary">Cancel</a>
+  </div>
+</form>
+{% endblock %}

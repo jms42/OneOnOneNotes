@@ -39,6 +39,25 @@
     <input type="hidden" name="sentiment" id="sentimentInput" value="{{ meeting.sentiment if meeting else 3 }}">
   </div>
 
+  <div class="mb-4">
+    <label class="form-label">Recurring Meeting</label>
+    <div class="d-flex align-items-center gap-3">
+      <div class="form-check mb-0">
+        <input class="form-check-input" type="checkbox" name="recurring" id="recurringCheck"
+               value="1" {{ 'checked' if meeting and meeting.get('recurring') }}>
+        <label class="form-check-label" for="recurringCheck">This is a recurring meeting</label>
+      </div>
+      <div id="recurrenceOptions" class="{{ '' if (meeting and meeting.get('recurring')) else 'd-none' }}">
+        <select name="recurrence_interval" class="form-select form-select-sm" style="width:auto">
+          <option value="weekly"   {{ 'selected' if meeting and meeting.get('recurrence_interval') == 'weekly'   }}>Weekly</option>
+          <option value="biweekly" {{ 'selected' if meeting and meeting.get('recurrence_interval') == 'biweekly' }}>Bi-weekly</option>
+          <option value="monthly"  {{ 'selected' if meeting and meeting.get('recurrence_interval') == 'monthly'  }}>Monthly</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-text">When marked complete, the next occurrence is automatically created.</div>
+  </div>
+
   <div class="mb-3">
     <label class="form-label">Agenda</label>
     <textarea name="agenda" class="form-control" rows="4"
@@ -121,6 +140,13 @@ stars.forEach(star => {
   star.addEventListener('mouseout', () => {
     stars.forEach(s => s.classList.remove('hover'));
   });
+});
+
+// Recurring toggle
+const recurringCheck = document.getElementById('recurringCheck');
+const recurrenceOptions = document.getElementById('recurrenceOptions');
+recurringCheck.addEventListener('change', () => {
+  recurrenceOptions.classList.toggle('d-none', !recurringCheck.checked);
 });
 
 // Dynamic action items

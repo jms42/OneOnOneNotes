@@ -1,0 +1,8 @@
+{% macro rel_badge(person) %}
+{% if person and person.get('relationship') %}
+{% set rel = person.relationship %}
+{% set color = relationship_colors.get(rel, 'secondary') %}
+{% set label = dict(relationship_types).get(rel, rel) %}
+<span class="badge bg-{{ color }}">{{ label }}</span>
+{% endif %}
+{% endmacro %}

@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% from 'macros.html' import rel_badge with context %}
 {% block title %}People — 1:1 Notes{% endblock %}
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -12,7 +13,10 @@
   <div class="col">
     <div class="card h-100 shadow-sm">
       <div class="card-body">
-        <h6 class="card-title mb-1"><a href="/people/{{ p.id }}" class="text-decoration-none">{{ p.name }}</a></h6>
+        <h6 class="card-title mb-1">
+          <a href="/people/{{ p.id }}" class="text-decoration-none">{{ p.name }}</a>
+          {{ rel_badge(p) }}
+        </h6>
         {% if p.title %}<div class="small text-muted">{{ p.title }}</div>{% endif %}
         {% if p.team %}<div class="small text-muted">{{ p.team }}</div>{% endif %}
         <div class="small text-muted mt-2">{{ meeting_counts.get(p.id, 0) }} meeting(s)</div>
@@ -20,6 +24,7 @@
       <div class="card-footer bg-transparent d-flex gap-2">
         <a href="/meetings/new?person_id={{ p.id }}" class="btn btn-sm btn-outline-primary">+ Meeting</a>
         <a href="/people/{{ p.id }}" class="btn btn-sm btn-outline-secondary">View</a>
+        <a href="/people/{{ p.id }}/edit" class="btn btn-sm btn-outline-secondary">Edit</a>
         <form method="post" action="/people/{{ p.id }}/delete" class="ms-auto"
               onsubmit="return confirm('Delete {{ p.name }}? Their meetings will be kept.')">
           <button class="btn btn-sm btn-outline-danger">Delete</button>
@@ -56,6 +61,19 @@
           <div class="mb-3">
             <label class="form-label">Team</label>
             <input type="text" name="team" class="form-control" placeholder="e.g. Platform">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Relationship</label>
+            <select name="relationship" class="form-select">
+              <option value="">— None —</option>
+              {% for key, label in relationship_types %}
+              <option value="{{ key }}">{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Notes</label>
+            <textarea name="notes" class="form-control" rows="3" placeholder="Background context, things to remember…"></textarea>
           </div>
         </div>
         <div class="modal-footer">

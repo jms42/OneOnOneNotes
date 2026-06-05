@@ -36,3 +36,16 @@
 .navbar-brand {
   letter-spacing: -0.5px;
 }
+
+.bg-purple {
+  background-color: #6f42c1 !important;
+  color: #fff !important;
+}
+
+@media print {
+  .navbar, .btn, form, .no-print { display: none !important; }
+  .container { max-width: 100% !important; padding: 0 16px !important; }
+  .card { box-shadow: none !important; border: 1px solid #dee2e6 !important; }
+  .notes-text { font-size: 0.9rem; }
+  a { color: inherit !important; text-decoration: none !important; }
+}

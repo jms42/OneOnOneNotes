@@ -1,14 +1,27 @@
 {% extends 'base.html' %}
+{% from 'macros.html' import rel_badge with context %}
 {% block title %}{{ person.name }} — 1:1 Notes{% endblock %}
 {% block content %}
-<div class="d-flex justify-content-between align-items-start mb-4">
+<div class="d-flex justify-content-between align-items-start mb-3">
   <div>
-    <h4 class="mb-1">{{ person.name }}</h4>
+    <h4 class="mb-1">{{ person.name }} {{ rel_badge(person) }}</h4>
     {% if person.title %}<div class="text-muted">{{ person.title }}</div>{% endif %}
     {% if person.team %}<div class="text-muted small">{{ person.team }}</div>{% endif %}
   </div>
-  <a href="/meetings/new?person_id={{ person.id }}" class="btn btn-primary btn-sm">+ New Meeting</a>
+  <div class="d-flex gap-2">
+    <a href="/people/{{ person.id }}/edit" class="btn btn-outline-secondary btn-sm">Edit</a>
+    <a href="/meetings/new?person_id={{ person.id }}" class="btn btn-primary btn-sm">+ New Meeting</a>
+  </div>
 </div>
+
+{% if person.notes %}
+<div class="card mb-4 shadow-sm">
+  <div class="card-header fw-semibold">Notes</div>
+  <div class="card-body">
+    <pre class="mb-0 notes-text">{{ person.notes }}</pre>
+  </div>
+</div>
+{% endif %}
 
 {% if upcoming %}
 <h6 class="text-uppercase text-muted small fw-semibold mb-2">Upcoming</h6>
@@ -16,7 +29,12 @@
   {% for m in upcoming %}
   <a href="/meetings/{{ m.id }}" class="list-group-item list-group-item-action">
     <div class="d-flex justify-content-between align-items-center">
-      <strong>{{ m.date }}</strong>
+      <div>
+        <strong>{{ m.date }}</strong>
+        {% if m.get('recurring') %}
+        <span class="badge bg-info text-dark ms-2 small">{{ m.recurrence_interval | title }}</span>
+        {% endif %}
+      </div>
       <span class="text-warning" title="{{ m.sentiment }}/5">{{ '★' * m.sentiment }}{{ '☆' * (5 - m.sentiment) }}</span>
     </div>
     {% if m.agenda %}

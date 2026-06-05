@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% from 'macros.html' import rel_badge with context %}
 {% block title %}Dashboard — 1:1 Notes{% endblock %}
 
 {% macro meeting_row(m) %}
@@ -6,7 +7,11 @@
   <div class="d-flex justify-content-between align-items-center">
     <div>
       <strong>{{ people_map[m.person_id].name if m.person_id in people_map else 'Unknown' }}</strong>
+      {% if m.person_id in people_map %}{{ rel_badge(people_map[m.person_id]) }}{% endif %}
       <span class="text-muted ms-2 small">{{ m.date }}</span>
+      {% if m.get('recurring') %}
+      <span class="badge bg-info text-dark ms-1 small">{{ m.recurrence_interval | title }}</span>
+      {% endif %}
     </div>
     <span class="text-warning">{{ '★' * m.sentiment }}{{ '☆' * (5 - m.sentiment) }}</span>
   </div>
