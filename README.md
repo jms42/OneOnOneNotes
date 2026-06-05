@@ -4,13 +4,19 @@ A local Flask web app for managing skip-level 1:1 meetings. Runs in your browser
 
 ## Features
 
-- **People** — manage your skip-level reports with name, title, and team
+- **People** — manage your reports with name, title, team, and per-person notes for persistent context
+- **Relationship types** — tag each person as Direct Report, My Manager, Skip Level Manager, Peer, Skip Level Employee, Mentor, or Mentee; shown as colored badges throughout
+- **Relationships page** — view all people grouped by relationship type
 - **Meetings** — record agenda, notes, action items, and a 1–5 sentiment rating per meeting
-- **Upcoming / Completed** — meetings split into upcoming (not yet marked done) and completed sections on both the dashboard and each person's page
+- **Recurring meetings** — mark a meeting as weekly, bi-weekly, or monthly; completing it automatically schedules the next occurrence
+- **Upcoming / Completed** — meetings split by completion status on the dashboard and each person's page
 - **Dashboard** — upcoming meetings and the last 5 completed meetings at a glance, plus all open action items across everyone
 - **Action items** — track owner and due date; mark done from any meeting or directly from the dashboard
 - **Search** — full-text search across all meeting fields (person, date, agenda, notes, action items)
-- **Backup** — one-click timestamped download; choose plaintext JSON or encrypted when encryption is enabled
+- **Export to Markdown** — download any meeting as a `.md` file
+- **Print** — print-friendly view via browser print (nav and buttons hidden automatically)
+- **Backup** — timestamped download as plaintext JSON or encrypted `.enc` when encryption is enabled
+- **Import** — restore from a `.json` or `.enc` backup; choose merge (skip duplicates) or replace
 - **Encryption** — optional AES encryption of the data file; password is entered once at startup in the terminal
 - **Light / dark mode** — toggle in the nav bar; preference is saved in the browser
 
